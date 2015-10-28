@@ -10,7 +10,7 @@ Before using this plugin, you must ensure that `phpcs` is installed on your
 system together with the Drupal coding standards.
 
 To do this, follow the next steps:
-```
+```ShellSession
 composer global require drupal/coder
 sudo ln -s ~/.composer/vendor/bin/phpcs /usr/local/bin
 phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
