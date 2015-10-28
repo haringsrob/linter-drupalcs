@@ -1,7 +1,5 @@
 linter-drupalcs
 =========================
-[![Build Status](https://travis-ci.org/AtomLinter/linter-drupalcs.svg)](https://travis-ci.org/AtomLinter/linter-drupalcs)
-
 This linter plugin for [Linter](https://github.com/AtomLinter/Linter) provides
 an interface to [phpcs](http://pear.php.net/package/PHP_CodeSniffer/). It is a
 fork of the [linter-phpcs](https://github.com/AtomLinter/linter-phpcs) package
@@ -11,7 +9,7 @@ modified to work better for Drupal projects.
 Before using this plugin, you must ensure that `phpcs` is installed on your
 system together with the Drupal coding standards.
 
-For more information about these procedures please check [this drupal article](https://www.drupal.org/node/1419988)
+For more information about these procedures please check [this drupal article.](https://www.drupal.org/node/1419988)
 
 
 ### Package Installation
