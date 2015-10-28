@@ -1,6 +1,6 @@
 linter-drupalcs
 =========================
-[![Build Status](https://travis-ci.org/AtomLinter/linter-phpcs.svg)](https://travis-ci.org/AtomLinter/linter-phpcs)
+[![Build Status](https://travis-ci.org/AtomLinter/linter-drupalcs.svg)](https://travis-ci.org/AtomLinter/linter-drupalcs)
 
 This linter plugin for [Linter](https://github.com/AtomLinter/Linter) provides
 an interface to [phpcs](http://pear.php.net/package/PHP_CodeSniffer/). It is a
