@@ -66,7 +66,7 @@ module.exports =
     minimatch = require 'minimatch'
     provider =
       name: 'DRUPALCS'
-      grammarScopes: ['*']
+      grammarScopes: ['source.js', 'source.php']
       scope: 'file'
       lintOnFly: true
       lint: (textEditor) =>
