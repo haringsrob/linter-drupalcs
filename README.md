@@ -9,8 +9,15 @@ modified to work better for Drupal projects.
 Before using this plugin, you must ensure that `phpcs` is installed on your
 system together with the Drupal coding standards.
 
-For more information about these procedures please check [this drupal article.](https://www.drupal.org/node/1419988)
+To do this, follow the next steps:
+```
+composer global require drupal/coder
+sudo ln -s ~/.composer/vendor/bin/phpcs /usr/local/bin
+phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
+```
+After you have completed the steps above, no additional configuration is required.
 
+For more information about these procedures please check [this drupal article.](https://www.drupal.org/node/1419988)
 
 ### Package Installation
 You can then install this package either from within Atom or by running the
@@ -25,7 +32,7 @@ for you to provide an interface for this package.
 You can configure linter-phpcs from the Atom package manager or by editing
 ~/.atom/config.cson (choose Open Your Config in Atom menu).
 
-Here's an example configuration:
+Here's is the example config:
 ```cson
 'linter-phpcs':
   executablePath: phpcs # phpcs path. run 'which phpcs' to find the path
@@ -33,20 +40,3 @@ Here's an example configuration:
   warningSeverity: 0 # phpcs warning-severity (0 to display only errors)
   ignore: '*.features.field_base.inc,*.features.field_instance.inc,*.features.inc' # ignore filename patterns
 ```
-
-## Contributing
-If you would like to contribute enhancements or fixes, please do the following:
-
-0. Fork the plugin repository
-0. Hack on a separate topic branch created from the latest `master`
-0. Commit and push the topic branch
-0. Make a pull request
-0. Welcome to the club!
-
-Please note that modifications should follow these coding guidelines:
-
-- Indent is 2 spaces.
-- Code should pass coffeelint linter.
-- Vertical whitespace helps readability, don’t be afraid to use it.
-
-Thank you for helping out.
