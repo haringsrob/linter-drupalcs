@@ -20,6 +20,13 @@ module.exports =
       default: false
       description: 'Disable the linter when the default configuration file is not found.'
       order: 3
+    autoConfigSearch:
+      title: 'Search for configuration files'
+      type: 'boolean'
+      default: true
+      description: 'Automatically search for any `phpcs.xml` or `phpcs.ruleset.xml` ' +
+        'file to use as configuration. Overrides custom standards defined above.'
+      order: 4
     ignore:
       type: 'string'
       default: '*.features.field_base.inc,*.features.field_instance.inc,*.features.inc'
