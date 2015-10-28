@@ -7,7 +7,7 @@ an interface to [phpcs](http://pear.php.net/package/PHP_CodeSniffer/). It is a
 fork of the [linter-phpcs](https://github.com/AtomLinter/linter-phpcs) package
 modified to work better for Drupal projects.
 
-### phpcs Installation
+### drupalcs Installation
 Before using this plugin, you must ensure that `phpcs` is installed on your
 system together with the Drupal coding standards.
 
