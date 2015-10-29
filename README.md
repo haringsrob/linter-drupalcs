@@ -19,6 +19,13 @@ After you have completed the steps above, no additional configuration is require
 
 For more information about these procedures please check [this drupal article.](https://www.drupal.org/node/1419988)
 
+### Features
+Except for the regular inline coding standards issues, this package also add a
+button to the status bar.
+
+**copy drupalcs errors** can be used to get the errors to the clipboard so that
+you can easily report them.
+
 ### Package Installation
 You can then install this package either from within Atom or by running the
 following command:
