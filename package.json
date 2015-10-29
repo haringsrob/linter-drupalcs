@@ -1,6 +1,6 @@
 {
   "name": "linter-drupalcs",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "./lib/main",
   "description": "Lint Drupal on the fly, using phpcs and Drupal standards",
   "repository": "https://github.com/haringsrob/linter-drupalcs",
