@@ -12,6 +12,11 @@ module.exports =
       default: 'phpcs'
       description: 'Enter the path to your phpcs executable.'
       order: 1
+    searchExecutablePath:
+      type: 'boolean'
+      default: false
+      description: 'Search the local folder for an phpcs executable.'
+      order: 3
     codeStandardOrConfigFile:
       type: 'string'
       default: 'Drupal'
@@ -53,6 +58,9 @@ module.exports =
       unless value
         value = 'phpcs' # Let os's $PATH handle the rest
       @command = value
+    )
+    @subscriptions.add atom.config.observe('linter-drupalcs.searchExecutablePath', (value) =>
+      @searchExecutablePath = value
     )
     @subscriptions.add atom.config.observe('linter-drupalcs.disableWhenNoConfigFile', (value) =>
       @disableWhenNoConfigFile = value
@@ -113,6 +121,15 @@ module.exports =
         parameters = @parameters.filter (item) -> item
         standard = @standard
         command = @command
+
+        ## Search for a local instance.
+        if @searchExecutablePath
+          for index, project_dir of atom.project.getPaths()
+            executable_phpcs = helpers.findFile(project_dir + '/bin/', ['phpcs'])
+
+        ## If there is a relative one, we use this one.
+        if executable_phpcs then command = executable_phpcs
+
         confFile = helpers.findFile(path.dirname(filePath), ['phpcs.xml', 'phpcs.ruleset.xml', 'phpcs-ruleset.xml'])
         standard = if @autoConfigSearch and confFile then confFile else standard
         return [] if @disableWhenNoConfigFile and not confFile
