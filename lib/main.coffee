@@ -1,4 +1,7 @@
 {CompositeDisposable} = require 'atom'
+
+window.drupalcs_latest_data = 'drupalcs'
+
 module.exports =
   config:
     executablePath:
@@ -37,6 +40,7 @@ module.exports =
       default: 1
       description: 'Set the warning severity level. Enter 0 to display errors only.'
       order: 6
+
   activate: ->
     require('atom-package-deps').install('linter-drupalcs')
     @parameters = []
@@ -66,13 +70,24 @@ module.exports =
 
   # Status bar.
   consumeStatusBar: (statusBar) ->
-    myElement =
-    @statusBarTile = statusBar.addLeftTile(item: '<span class="test">Test</span>', priority: 100)
+    # Create our element.
+    span = document.createElement('a')
+    span.textContent = 'copy drupalcs errors'
+    span.className = 'inline-block copy-drupalcs-errors'
+
+    clickHandler = ->
+      text = window.drupalcs_latest_data
+      atom.clipboard.write(text)
+
+    # Add onclick handler.
+    span.addEventListener('click', clickHandler)
+
+    @statusBarTile = statusBar.addLeftTile(item: span, priority: 0)
 
   deactivate: ->
     @subscriptions.dispose()
-    @statusBarTile?.destroy()
-    @statusBarTile = null
+    @statusBar?.destroy()
+    @statusBar = null
 
   provideLinter: ->
     path = require 'path'
@@ -93,16 +108,27 @@ module.exports =
           return [] if @ignore.some (pattern) -> minimatch baseName, pattern
 
         eolChar = textEditor.getBuffer().lineEndingForRow(0)
+        dcsparameters = @parameters.filter (item) -> item
         parameters = @parameters.filter (item) -> item
         standard = @standard
         command = @command
         confFile = helpers.findFile(path.dirname(filePath), ['phpcs.xml', 'phpcs.ruleset.xml'])
         standard = if @autoConfigSearch and confFile then confFile else standard
         return [] if @disableWhenNoConfigFile and not confFile
-        if standard then parameters.push("--standard=#{standard}")
+        if standard
+          parameters.push("--standard=#{standard}")
+          dcsparameters.push("--standard=#{standard}")
+
         parameters.push('--report=json')
         text = 'phpcs_input_file: ' + filePath + eolChar + textEditor.getText()
+
+        ## Set our variable.
+        dcsparameters.push('--report=full')
+        helpers.exec(command, dcsparameters, {stdin: text}).then (customresult) ->
+          window.drupalcs_latest_data = customresult
+
         return helpers.exec(command, parameters, {stdin: text}).then (result) ->
+          ## Complete regular results.
           try
             result = JSON.parse(result.toString().trim())
           catch error
