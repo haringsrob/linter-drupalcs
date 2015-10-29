@@ -34,7 +34,7 @@ You can configure linter-phpcs from the Atom package manager or by editing
 
 Here's is the example config:
 ```cson
-'linter-phpcs':
+'linter-drupalcs':
   executablePath: phpcs # phpcs path. run 'which phpcs' to find the path
   codeStandardOrConfigFile: 'Drupal' # Drupal coding standards file
   warningSeverity: 0 # phpcs warning-severity (0 to display only errors)
