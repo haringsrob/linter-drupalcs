@@ -1,5 +1,8 @@
 {CompositeDisposable} = require 'atom'
 
+path = require 'path'
+helpers = require 'atom-linter'
+minimatch = require 'minimatch'
 window.drupalcs_latest_data = 'drupalcs'
 
 module.exports =
@@ -89,10 +92,8 @@ module.exports =
     @statusBar?.destroy()
     @statusBar = null
 
+
   provideLinter: ->
-    path = require 'path'
-    helpers = require 'atom-linter'
-    minimatch = require 'minimatch'
     provider =
       name: 'DRUPALCS'
       grammarScopes: ['source.js', 'source.php']
