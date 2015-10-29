@@ -63,9 +63,14 @@ module.exports =
     @subscriptions.add atom.config.observe('linter-drupalcs.warningSeverity', (value) =>
       @parameters[2] = "--warning-severity=#{value}"
     )
+  ## Status bar.
+  consumeStatusBar: (statusBar) ->
+    @statusBarTile = statusBar.addLeftTile(item: myElement, priority: 100)
 
   deactivate: ->
     @subscriptions.dispose()
+    @statusBarTile?.destroy()
+    @statusBarTile = null
 
   provideLinter: ->
     path = require 'path'
