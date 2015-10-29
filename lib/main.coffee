@@ -30,7 +30,7 @@ module.exports =
       title: 'Search for configuration files'
       type: 'boolean'
       default: true
-      description: 'Automatically search for any `phpcs.xml` or `phpcs.ruleset.xml` ' +
+      description: 'Automatically search for any `phpcs.xml`, `phpcs.ruleset.xml` or `phpcs-ruleset.xml` ' +
         'file to use as configuration. Overrides custom standards defined above.'
       order: 4
     ignore:
@@ -113,7 +113,7 @@ module.exports =
         parameters = @parameters.filter (item) -> item
         standard = @standard
         command = @command
-        confFile = helpers.findFile(path.dirname(filePath), ['phpcs.xml', 'phpcs.ruleset.xml'])
+        confFile = helpers.findFile(path.dirname(filePath), ['phpcs.xml', 'phpcs.ruleset.xml', 'phpcs-ruleset.xml'])
         standard = if @autoConfigSearch and confFile then confFile else standard
         return [] if @disableWhenNoConfigFile and not confFile
         if standard
