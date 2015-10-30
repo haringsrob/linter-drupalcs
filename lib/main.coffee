@@ -139,14 +139,15 @@ module.exports =
           command = executable_phpcs
 
         # Get the config file.
-        for index, filename of ['phpcs.xml', 'phpcs.ruleset.xml', 'phpcs-ruleset.xml']
+        for index, filename of ['phpcs.ruleset.xml', 'phpcs-ruleset.xml', 'phpcs.xml']
           checkfilepath = project_dir + '/' + filename
           if fs.existsSync(checkfilepath)
             confFile = checkfilepath
+            break
 
         # If we didnt fine a config file on path base, we can search deeper.
         if not confFile
-          confFile = helpers.findFile(path.dirname(filePath), ['phpcs.xml', 'phpcs.ruleset.xml', 'phpcs-ruleset.xml'])
+          confFile = helpers.findFile(path.dirname(filePath), ['phpcs.ruleset.xml', 'phpcs-ruleset.xml', 'phpcs.xml'])
 
         # If a local executable is here, but no config file fall back to the
         # global config.
