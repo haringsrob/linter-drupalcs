@@ -1,6 +1,7 @@
 {CompositeDisposable} = require 'atom'
 
 path = require 'path'
+fs = require('fs')
 helpers = require 'atom-linter'
 minimatch = require 'minimatch'
 window.drupalcs_latest_data = 'drupalcs'
@@ -40,7 +41,7 @@ module.exports =
       order: 4
     ignore:
       type: 'string'
-      default: '*.features.field_base.inc,*.features.field_instance.inc,*.features.inc'
+      default: ''
       description: 'Enter filename patterns to ignore when running the linter.'
       order: 5
     warningSeverity:
@@ -78,6 +79,7 @@ module.exports =
     @subscriptions.add atom.config.observe('linter-drupalcs.warningSeverity', (value) =>
       @parameters[2] = "--warning-severity=#{value}"
     )
+
 
   # Status bar.
   consumeStatusBar: (statusBar) ->
@@ -117,38 +119,56 @@ module.exports =
           return [] if @ignore.some (pattern) -> minimatch baseName, pattern
 
         eolChar = textEditor.getBuffer().lineEndingForRow(0)
-        dcsparameters = @parameters.filter (item) -> item
         parameters = @parameters.filter (item) -> item
         standard = @standard
         command = @command
 
+        # By default no phpcs exec.
+        executable_phpcs = false
+
         ## Search for a local instance.
         if @searchExecutablePath
           for index, project_dir of atom.project.getPaths()
-            executable_phpcs = helpers.findFile(project_dir + '/bin/', ['phpcs'])
+            checkfilepath = project_dir + '/bin/phpcs'
+            if fs.existsSync(checkfilepath)
+              executable_phpcs = checkfilepath
 
         ## If there is a relative one, we use this one.
-        if executable_phpcs then command = executable_phpcs
+        if executable_phpcs
+          command = executable_phpcs
 
-        confFile = helpers.findFile(path.dirname(filePath), ['phpcs.xml', 'phpcs.ruleset.xml', 'phpcs-ruleset.xml'])
+        # Get the config file.
+        for index, filename of ['phpcs.xml', 'phpcs.ruleset.xml', 'phpcs-ruleset.xml']
+          checkfilepath = project_dir + '/' + filename
+          if fs.existsSync(checkfilepath)
+            confFile = checkfilepath
+
+        # If we didnt fine a config file on path base, we can search deeper.
+        if not confFile
+          confFile = helpers.findFile(path.dirname(filePath), ['phpcs.xml', 'phpcs.ruleset.xml', 'phpcs-ruleset.xml'])
+
+        # Other configurations
         standard = if @autoConfigSearch and confFile then confFile else standard
         return [] if @disableWhenNoConfigFile and not confFile
         if standard
           parameters.push("--standard=#{standard}")
-          dcsparameters.push("--standard=#{standard}")
 
+        # We'd like to receive 2 formats.
         parameters.push('--report=json')
+        parameters.push('--report=full')
         text = 'phpcs_input_file: ' + filePath + eolChar + textEditor.getText()
 
-        ## Set our variable.
-        dcsparameters.push('--report=full')
-        helpers.exec(command, dcsparameters, {stdin: text}).then (customresult) ->
-          window.drupalcs_latest_data = customresult
-
+        # Execute the request.
         return helpers.exec(command, parameters, {stdin: text}).then (result) ->
+          # Convert the result to a string.
+          resultstring = result.toString().split('FILE:')
+          # First part is our json
+          json_result = resultstring[0]
+          # Rest is our full.
+          full_result = 'FILE:' + resultstring[1]
           ## Complete regular results.
           try
-            result = JSON.parse(result.toString().trim())
+            result = JSON.parse(json_result.trim())
           catch error
             atom.notifications.addError('Error parsing PHPCS response', {
               detail: 'Something went wrong attempting to parse the PHPCS output.',
@@ -158,6 +178,10 @@ module.exports =
             return []
           return [] unless result.files[filePath]
           return result.files[filePath].messages.map (message) ->
+            ## Write the message to the global.
+            if full_result
+              window.drupalcs_latest_data = full_result
+            ## Results for the project.
             startPoint = [message.line - 1, message.column - 1]
             endPoint = [message.line - 1, message.column]
             return {
