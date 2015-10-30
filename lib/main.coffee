@@ -122,6 +122,7 @@ module.exports =
         parameters = @parameters.filter (item) -> item
         standard = @standard
         command = @command
+        original_command = @command
 
         # By default no phpcs exec.
         executable_phpcs = false
@@ -146,6 +147,11 @@ module.exports =
         # If we didnt fine a config file on path base, we can search deeper.
         if not confFile
           confFile = helpers.findFile(path.dirname(filePath), ['phpcs.xml', 'phpcs.ruleset.xml', 'phpcs-ruleset.xml'])
+
+        # If a local executable is here, but no config file fall back to the
+        # global config.
+        if executable_phpcs and not confFile
+          command = @command
 
         # Other configurations
         standard = if @autoConfigSearch and confFile then confFile else standard
@@ -174,7 +180,10 @@ module.exports =
               detail: 'Something went wrong attempting to parse the PHPCS output.',
               dismissable: true}
             )
-            console.log('PHPCS Response', result)
+            atom.notifications.addError('This is the error message', {
+              detail: result,
+              dismissable: true}
+            )
             return []
           return [] unless result.files[filePath]
           return result.files[filePath].messages.map (message) ->
